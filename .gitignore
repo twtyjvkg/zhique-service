@@ -130,3 +130,7 @@ dmypy.json
 
 # idea
 .idea
+
+# Django
+migrations/
+!migrations/__init__.py
