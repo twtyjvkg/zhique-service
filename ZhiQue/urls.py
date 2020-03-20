@@ -13,9 +13,25 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-# from django.contrib import admin
-from django.urls import path
+from django.conf.urls import url
+from django.urls import include, path
+from django.views.generic import TemplateView
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+
+from ZhiQue import permissions
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title='知雀',
+        default_version='v1',
+        description='知雀接口文档',
+    ),
+    public=True,
+    permission_classes=(permissions.IsAdminUser,),
+)
 
 urlpatterns = [
-    #    path('admin/', admin.site.urls),
+    path('swagger-ui/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    url(r'^api/(?P<version>(v1|v2))/auth/', include('zhique_auth.urls', namespace='zhique_auth')),
 ]

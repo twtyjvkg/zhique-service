@@ -1,0 +1,8 @@
+# common
+mysqlclient
+django
+
+# drf
+djangorestframework
+drf-yasg
+djangorestframework-jwt
