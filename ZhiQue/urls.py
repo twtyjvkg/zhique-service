@@ -35,4 +35,5 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('swagger-ui/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^api/(?P<version>(v1|v2))/account/', include('account.urls', namespace='account')),
+    url(r'^api/(?P<version>(v1|v2))/oauth/', include('oauth.urls', namespace='oauth')),
 ]

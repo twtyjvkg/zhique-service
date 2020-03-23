@@ -6,3 +6,6 @@ django
 djangorestframework
 drf-yasg
 djangorestframework-jwt
+
+# yuque
+requests
