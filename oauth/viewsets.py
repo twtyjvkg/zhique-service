@@ -12,7 +12,7 @@ from .models import OAuthApp
 from .serializers import OAuthAppSerializer
 
 
-class OAuthAppViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+class OAuthAppViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
     """oauth应用视图集"""
     queryset = OAuthApp.objects.all()
     serializer_class = OAuthAppSerializer
@@ -26,3 +26,12 @@ class OAuthAppViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.G
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        data = request.data
+        serializer = self.get_serializer(instance, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)

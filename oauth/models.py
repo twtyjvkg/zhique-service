@@ -33,7 +33,8 @@ class OAuthApp(BaseModelMixin):
     type = models.CharField('类型', max_length=10, unique=True, choices=TYPE, default='yuque')
     app_key = models.CharField(max_length=200, verbose_name='AppKey')
     app_secret = models.CharField(max_length=200, verbose_name='AppSecret')
-    callback_url = models.CharField(max_length=200, verbose_name='回调地址', blank=False, null=False)
+    authorize_url = models.URLField(verbose_name='认证地址', blank=False, null=False)
+    token_url = models.URLField(verbose_name='token地址', blank=False, null=False)
 
     def __str__(self):
         return self.get_type_display()
