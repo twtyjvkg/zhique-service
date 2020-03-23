@@ -18,6 +18,7 @@ from django.urls import include, path
 from django.views.generic import TemplateView
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
+from rest_framework.authentication import BasicAuthentication
 
 from ZhiQue import permissions
 
@@ -28,10 +29,10 @@ schema_view = get_schema_view(
         description='知雀接口文档',
     ),
     public=True,
-    permission_classes=(permissions.IsAdminUser,),
+    permission_classes=(permissions.AllowAny,),
 )
 
 urlpatterns = [
     path('swagger-ui/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    url(r'^api/(?P<version>(v1|v2))/auth/', include('zhique_auth.urls', namespace='zhique_auth')),
+    url(r'^api/(?P<version>(v1|v2))/account/', include('account.urls', namespace='account')),
 ]

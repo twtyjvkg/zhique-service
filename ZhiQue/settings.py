@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'zhique_auth.apps.ZhiqueAuthConfig',
+    'account.apps.AccountConfig',
     'rest_framework',
     'drf_yasg'
 ]
@@ -109,10 +109,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'zhique_auth.User'
+AUTH_USER_MODEL = 'account.User'
 
 AUTHENTICATION_BACKENDS = (
-    'zhique_auth.authentication.EmailOrUsernameModelBackend',
+    'account.authentication.EmailOrUsernameModelBackend',
 )
 
 
@@ -146,7 +146,8 @@ REST_FRAMEWORK = {
     'ALLOWED_VERSIONS': ['v1', 'v2'],
     'DEFAULT_PAGINATION_CLASS': 'ZhiQue.utils.Pagination',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'zhique_auth.authentication.JSONWebTokenAuthentication',
+        'account.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ),
 }
 
@@ -154,5 +155,5 @@ REST_FRAMEWORK = {
 # http://jpadilla.github.io/django-rest-framework-jwt/#additional-settings
 JWT_AUTH = {
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'zhique_auth.utils.jwt_response_payload_handler',
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'account.utils.jwt_response_payload_handler',
 }

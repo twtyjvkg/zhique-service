@@ -8,7 +8,7 @@ from django.conf.urls import url
 
 from .views import UserRegisterAPIView, UserProfileAPIView, LoginAPIView
 
-app_name = 'zhique_auth'
+app_name = 'account'
 
 urlpatterns = [
     url(r'login', LoginAPIView.as_view(), name='login'),
