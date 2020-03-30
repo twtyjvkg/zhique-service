@@ -1,6 +1,7 @@
 # common
 mysqlclient
 django
+django-redis
 
 # drf
 djangorestframework

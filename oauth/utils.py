@@ -9,13 +9,13 @@ from django.shortcuts import get_object_or_404
 from .models import OAuthApp
 
 
-def get_app_config(app_type=None):
+def get_app_config(name=None):
     """
     获取oauth应用配置
-    :param app_type: 应用类型
+    :param name: 应用类型
     :return: 应用信息
     """
-    app = get_object_or_404(OAuthApp, type=app_type)
+    app = get_object_or_404(OAuthApp, name=name)
     conf = {
         'app_key': app.app_key,
         'app_secret': app.app_secret,

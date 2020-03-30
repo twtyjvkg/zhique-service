@@ -15,10 +15,8 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.urls import include, path
-from django.views.generic import TemplateView
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
-from rest_framework.authentication import BasicAuthentication
 
 from ZhiQue import permissions
 

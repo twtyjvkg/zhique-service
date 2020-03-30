@@ -16,7 +16,7 @@ blog_router.register(r'apps', OAuthAppViewSet)
 app_name = 'oauth'
 
 urlpatterns = [
-                  url(r'^(?P<type>[a-z]+)/authorize$', AuthorizeAPIView.as_view(), name='authorize'),
-                  url(r'^(?P<type>[a-z]+)/callback$', CallbackAPIView.as_view(), name='callback'),
+                  url(r'^(?P<oauth_type>[a-z]+)/authorize$', AuthorizeAPIView.as_view(), name='authorize'),
+                  url(r'^(?P<oauth_type>[a-z]+)/callback$', CallbackAPIView.as_view(), name='callback'),
               ] + blog_router.urls
 

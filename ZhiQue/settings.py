@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'account.apps.AccountConfig',
     'oauth.apps.OAuthConfig',
     'rest_framework',
@@ -89,6 +90,20 @@ DATABASES = {
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
         }
     }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://{url}:{port}/0'.format(
+            url='127.0.0.1',
+            port=6379
+        ),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PASSWORD": '',
+        },
+    },
 }
 
 
@@ -158,3 +173,5 @@ JWT_AUTH = {
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'account.utils.jwt_response_payload_handler',
 }
+
+SITE_ID = 1
