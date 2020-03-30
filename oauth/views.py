@@ -12,6 +12,8 @@ from rest_framework.reverse import reverse
 
 from ZhiQue import permissions
 from ZhiQue.utils import get_redirect_uri
+from yuque.client import Client
+from .models import OAuthUser
 from .utils import get_app_config
 
 
@@ -33,7 +35,7 @@ class AuthorizeAPIView(GenericAPIView):
                         'oauth_type': oauth_type
                     })
                 })
-                next_uri = get_redirect_uri(self.request)
+                next_uri = get_redirect_uri(request)
                 cache.set('oauth:authorize:state:{0}'.format(state), next_uri, timeout=60 * 60)
                 return HttpResponseRedirect('{0}?{1}'.format(conf['authorize_url'], data))
         raise exceptions.NotFound('认证地址错误')
@@ -44,11 +46,27 @@ class CallbackAPIView(GenericAPIView):
     permission_classes = [permissions.AllowAny, ]
 
     def get(self, request, oauth_type=None, *args, **kwargs):
-        if oauth_type == 'yuque':
-            code = self.request.query_params['code']
-            state = self.request.query_params['state']
-            state_cache = 'oauth:authorize:state:{0}'.format(state)
-            if cache.ttl(state_cache) == 0:
-                raise exceptions.PermissionDenied('回调接口地址错误或请求超时')
-            next_uri = cache.get(state_cache)
-            cache.delete(state_cache)
+        next_uri = get_redirect_uri(request)
+        access_token = None
+        conf = get_app_config(name=oauth_type)
+        if conf:
+            if oauth_type == 'yuque':
+                code = self.request.query_params['code']
+                state = self.request.query_params['state']
+                state_cache = 'oauth:authorize:state:{0}'.format(state)
+                if cache.ttl(state_cache) == 0:
+                    raise exceptions.PermissionDenied('回调接口地址错误或请求超时')
+                next_uri = cache.get(state_cache)
+                cache.delete(state_cache)
+                yuque_client = Client()
+                response_data = yuque_client.request(conf['token_url'], 'POST', {
+                    'client_id': conf['app_key'],
+                    'client_secret': conf['app_secret'],
+                    'code': code,
+                    'grant_type': 'authorization_code'
+                })
+                access_token = response_data.get('access_token')
+            user = request.user
+            if user.is_anonymous:
+
+        return HttpResponseRedirect(next_uri)
