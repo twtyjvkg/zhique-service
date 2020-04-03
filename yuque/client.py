@@ -24,17 +24,17 @@ class Client:
         self.api_host = api_host
         self.user_token = user_token
 
-    def request(self, api, method, request_data, user_agent='@zhique/sdk'):
-        request_url = f'{self.api_host}/{api}' if self.api_host else api
+    def request(self, api, method='GET', request_data=None, user_agent='@zhique/sdk'):
+        request_url = f'{self.api_host}/{api}'
         request_header = {'User-Agent': user_agent, 'X-Auth-Token': self.user_token}
         if method == 'GET':
-            func = self._get_request
+            func = self.get_request
         elif method == 'POST':
-            func = self._post_request
+            func = self.post_request
         elif method == 'PUT':
-            func = self._put_request
+            func = self.put_request
         elif method == 'DELETE':
-            func = self._delete_request
+            func = self.delete_request
         else:
             raise ValueError
         response = func(request_url, request_data, request_header)
@@ -43,19 +43,19 @@ class Client:
         return response.json()
 
     @staticmethod
-    def _get_request(request_url, request_data, request_header):
+    def get_request(request_url, request_data, request_header):
         if request_data:
             request_url = f'{request_url}?{urlencode(request_data)}'
         return requests.get(request_url, headers=request_header)
 
     @staticmethod
-    def _post_request(request_url, request_data, request_header):
+    def post_request(request_url, request_data, request_header=None):
         return requests.post(request_url, json=request_data, headers=request_header)
 
     @staticmethod
-    def _put_request(request_url, request_data, request_header):
+    def put_request(request_url, request_data, request_header):
         return requests.put(request_url, json=request_data, headers=request_header)
 
     @staticmethod
-    def _delete_request(request_url, request_data, request_header):
+    def delete_request(request_url, request_data, request_header):
         return requests.delete(request_url, headers=request_header)

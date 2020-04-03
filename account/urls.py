@@ -6,12 +6,11 @@ __email__ = 'xuzhao@zhique.design'
 
 from django.conf.urls import url
 
-from .views import UserRegisterAPIView, UserProfileAPIView, LoginAPIView
+from .views import UserProfileAPIView
 
 app_name = 'account'
 
 urlpatterns = [
-    url(r'login', LoginAPIView.as_view(), name='login'),
-    url(r'register', UserRegisterAPIView.as_view(), name='register'),
-    url(r'currentUser', UserProfileAPIView.as_view()),
+
+    url(r'^users/self$', UserProfileAPIView.as_view()),
 ]

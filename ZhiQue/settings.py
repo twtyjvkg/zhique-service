@@ -128,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = 'account.User'
 
 AUTHENTICATION_BACKENDS = (
-    'account.authentication.EmailOrUsernameModelBackend',
+    'oauth.authentication.EmailOrUsernameModelBackend',
 )
 
 
@@ -162,8 +162,7 @@ REST_FRAMEWORK = {
     'ALLOWED_VERSIONS': ['v1', 'v2'],
     'DEFAULT_PAGINATION_CLASS': 'ZhiQue.utils.Pagination',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'account.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        'oauth.authentication.JSONWebTokenAuthentication',
     ),
 }
 
@@ -171,7 +170,21 @@ REST_FRAMEWORK = {
 # http://jpadilla.github.io/django-rest-framework-jwt/#additional-settings
 JWT_AUTH = {
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'account.utils.jwt_response_payload_handler',
+    'JWT_AUTH_COOKIE': 'access_token',
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=1),
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'oauth.utils.jwt_response_payload_handler',
 }
 
 SITE_ID = 1
+# drf-yasg configuration
+# https://drf-yasg.readthedocs.io/en/stable/settings.html
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'access_token',
+            'in': 'cookie'
+        }
+    }
+}

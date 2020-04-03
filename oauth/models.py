@@ -1,13 +1,16 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 
 # Create your models here.
+
 from ZhiQue.mixins import BaseModelMixin
+
 
 User = get_user_model()
 
 
-class OAuthApp(BaseModelMixin):
+class OAuthClient(BaseModelMixin):
     """oauth应用"""
     NAME = (
         ('yuque', '语雀'),
@@ -22,19 +25,19 @@ class OAuthApp(BaseModelMixin):
         return self.get_name_display()
 
     class Meta:
-        db_table = 'oauth_app'
+        db_table = 'oauth_client'
         verbose_name = 'oauth应用'
         verbose_name_plural = verbose_name
 
 
 class OAuthUser(BaseModelMixin):
     """oauth用户"""
-    openid = models.CharField(max_length=50, null=False, blank=False)
+    openid = models.CharField(max_length=50, null=True, blank=False)
     nickname = models.CharField('昵称', max_length=150, null=True, blank=True)
     avatar = models.URLField('头像', null=True, blank=True)
     access_token = models.CharField('access_token', max_length=200, null=False, blank=False)
     user = models.ForeignKey(User, verbose_name='用户', null=True, blank=True, on_delete=models.CASCADE)
-    oauth_type = models.ForeignKey(OAuthApp, verbose_name='oauth应用类型', on_delete=models.CASCADE)
+    oauth_type = models.ForeignKey(OAuthClient, verbose_name='oauth应用类型', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.nickname
