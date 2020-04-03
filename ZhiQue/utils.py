@@ -18,13 +18,13 @@ class Pagination(PageNumberPagination):
 
 
 def get_redirect_uri(request):
-    next_uri = request.GET.get('next_uri', None)
-    if not next_uri or next_uri == '/login/' or next_uri == '/login':
-        next_uri = '/'
-        return next_uri
-    p = urlparse(next_uri)
+    redirect_uri = request.GET.get('redirect_uri', None)
+    if not redirect_uri:
+        redirect_uri = '/'
+        return redirect_uri
+    p = urlparse(redirect_uri)
     if p.netloc:
         site = Site.objects.get_current().domain
         if not p.netloc.replace('www.', '') == site.replace('www.', ''):
             return '/'
-    return next_uri
+    return redirect_uri

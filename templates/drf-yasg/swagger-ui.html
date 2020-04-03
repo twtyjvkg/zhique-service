@@ -67,7 +67,7 @@
         {% if USE_SESSION_AUTH %}
             {% if request.user.is_authenticated %}
                 <div class='btn authorize'>
-                    <a id="auth" class="header__btn" href="{{ LOGOUT_URL }}?next={{ request.path }}" data-sw-translate>
+                    <a id="auth" class="header__btn" href="{{ LOGOUT_URL }}?redirect_uri={{ request.path }}" data-sw-translate>
                         {% block django_logout_message %}
                             Django Logout
                         {% endblock %}
@@ -75,7 +75,7 @@
                 </div>
             {% else %}
                 <div class='btn authorize'>
-                    <a id="auth" class="header__btn" href="{{ LOGIN_URL }}?next={{ request.path }}" data-sw-translate>
+                    <a id="auth" class="header__btn" href="{{ LOGIN_URL }}?redirect_uri={{ request.path }}" data-sw-translate>
                         {% block django_login_message %}
                             Django Login
                         {% endblock %}

@@ -127,6 +127,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'account.User'
 
+LOGIN_URL = '/oauth/login'
+LOGOUT_URL = '/oauth/logout'
+
 AUTHENTICATION_BACKENDS = (
     'oauth.authentication.EmailOrUsernameModelBackend',
 )
@@ -151,6 +154,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
@@ -163,6 +170,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'ZhiQue.utils.Pagination',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ),
 }
 
@@ -179,12 +187,5 @@ SITE_ID = 1
 # drf-yasg configuration
 # https://drf-yasg.readthedocs.io/en/stable/settings.html
 SWAGGER_SETTINGS = {
-    'USE_SESSION_AUTH': False,
-    'SECURITY_DEFINITIONS': {
-        'Bearer': {
-            'type': 'apiKey',
-            'name': 'access_token',
-            'in': 'cookie'
-        }
-    }
+    # 'USE_SESSION_AUTH': False,
 }

@@ -1,0 +1,27 @@
+{% extends 'share_layout/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <em>{{ form.non_field_errors }}</em>
+                    <div class="form-group">
+                        {{ form.username }}
+                        <em id="usernameError">
+                            {{ form.username.errors }}
+                        </em>
+                    </div>
+                    <div class="form-group">
+                        {{ form.password }}
+                        <em id="passwordError">
+                            {{ form.password.errors }}
+                        </em>
+                    </div>
+                    <button type="submit"  class="btn btn-primary">登录</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
