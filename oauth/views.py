@@ -4,7 +4,6 @@ from urllib import parse
 
 from django.contrib import auth
 from django.contrib.auth import logout
-from django.contrib.auth.forms import AuthenticationForm
 from django.core.cache import cache
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -25,7 +24,8 @@ from rest_framework_jwt.views import JSONWebTokenAPIView
 
 from ZhiQue import permissions, mixins
 from ZhiQue.utils import get_redirect_uri
-from yuque.client import Client
+
+from .clients import get_client_by_type
 from .forms import LoginForm
 from .models import OAuthUser
 from .serializers import TokenSerializer, UserRegisterSerializer
@@ -68,6 +68,18 @@ class LoginView(FormView):
         return f'{authorize_uri}?{data}'
 
 
+class OAuthLoginView(RedirectView):
+    """oauth客户端登录"""
+
+    @method_decorator(never_cache)
+    def dispatch(self, request, *args, **kwargs):
+        return super(OAuthLoginView, self).dispatch(request, *args, **kwargs)
+
+    def get_redirect_url(self, authorize_type, *args, **kwargs):
+        client = get_client_by_type(authorize_type)
+        return client.get_authorize_url(self.request)
+
+
 class LogoutView(RedirectView):
     """退出登录"""
 
@@ -90,7 +102,12 @@ class AuthorizeView(RedirectView):
     def dispatch(self, request, *args, **kwargs):
         return super(AuthorizeView, self).dispatch(request, *args, **kwargs)
 
-    def get_redirect_url(self, *args, **kwargs):
+    def get_redirect_url(self, authorize_type, *args, **kwargs):
+        request = self.request
+        code = request.GET.get('code')
+        client = get_client_by_type(authorize_type)
+        if client.get_access_token_by_code(code):
+            user = client.get_oauth_user_info()
         return get_redirect_uri(self.request)
 
 
@@ -137,60 +154,36 @@ class UserRegisterAPIView(mixins.CreateModelMixin, GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-# class AuthorizeAPIView(APIView):
-#     """oauth认证"""
+# class CallbackAPIView(APIView):
+#     """oauth认证回调"""
 #     permission_classes = [permissions.AllowAny, ]
 #
 #     def get(self, request, oauth_type=None, *args, **kwargs):
-#         conf = get_app_config(name=oauth_type)
-#         if conf:
+#         next_uri = get_redirect_uri(request)
+#         access_token = None
+#         client = get_client(name=oauth_type)
+#         if client:
 #             if oauth_type == 'yuque':
-#                 state = uuid.uuid4()
-#                 data = parse.urlencode({
-#                     'state': state,
-#                     'client_id': conf['app_key'],
-#                     'scope': 'group:read,repo:read,topic:read,doc:read',
-#                     'response_type': 'code',
-#                     'redirect_uri': reverse('oauth:callback', request=request, kwargs={
-#                         'oauth_type': oauth_type
-#                     })
+#                 code = self.request.query_params['code']
+#                 state = self.request.query_params['state']
+#                 state_cache = 'oauth:authorize:state:{0}'.format(state)
+#                 if cache.ttl(state_cache) == 0:
+#                     raise exceptions.PermissionDenied('回调接口地址错误或请求超时')
+#                 next_uri = cache.get(state_cache)
+#                 cache.delete(state_cache)
+#                 yuque_client = Client()
+#                 response_data = Client.post_request(client['token_url'], {
+#                     'client_id': client['app_key'],
+#                     'client_secret': client['app_secret'],
+#                     'code': code,
+#                     'grant_type': 'authorization_code'
 #                 })
-#                 next_uri = get_redirect_uri(request)
-#                 cache.set('oauth:authorize:state:{0}'.format(state), next_uri, timeout=60 * 60)
-#                 return HttpResponseRedirect('{0}?{1}'.format(conf['authorize_url'], data))
-#         raise exceptions.NotFound('认证地址错误')
-
-
-class CallbackAPIView(APIView):
-    """oauth认证回调"""
-    permission_classes = [permissions.AllowAny, ]
-
-    def get(self, request, oauth_type=None, *args, **kwargs):
-        next_uri = get_redirect_uri(request)
-        access_token = None
-        client = get_client(name=oauth_type)
-        if client:
-            if oauth_type == 'yuque':
-                code = self.request.query_params['code']
-                state = self.request.query_params['state']
-                state_cache = 'oauth:authorize:state:{0}'.format(state)
-                if cache.ttl(state_cache) == 0:
-                    raise exceptions.PermissionDenied('回调接口地址错误或请求超时')
-                next_uri = cache.get(state_cache)
-                cache.delete(state_cache)
-                yuque_client = Client()
-                response_data = Client.post_request(client['token_url'], {
-                    'client_id': client['app_key'],
-                    'client_secret': client['app_secret'],
-                    'code': code,
-                    'grant_type': 'authorization_code'
-                })
-                access_token = response_data.get('access_token')
-            user = request.user
-            if user.is_authenticated:
-                OAuthUser.objects.update_or_create(access_token=access_token,
-                                                   user=user,
-                                                   oauth_type_id=client['id']
-                                                   )
-
-        return HttpResponseRedirect(next_uri)
+#                 access_token = response_data.get('access_token')
+#             user = request.user
+#             if user.is_authenticated:
+#                 OAuthUser.objects.update_or_create(access_token=access_token,
+#                                                    user=user,
+#                                                    oauth_type_id=client['id']
+#                                                    )
+#
+#         return HttpResponseRedirect(next_uri)

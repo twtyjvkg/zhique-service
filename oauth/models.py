@@ -12,17 +12,17 @@ User = get_user_model()
 
 class OAuthClient(BaseModelMixin):
     """oauth应用"""
-    NAME = (
+    CLIENT_TYPE = (
         ('yuque', '语雀'),
     )
-    name = models.CharField('类型', max_length=10, unique=True, choices=NAME, default='yuque')
-    app_key = models.CharField(max_length=200, verbose_name='AppKey')
-    app_secret = models.CharField(max_length=200, verbose_name='AppSecret')
+    client_type = models.CharField('类型', max_length=10, unique=True, choices=CLIENT_TYPE, default='yuque')
+    client_key = models.CharField(max_length=200, verbose_name='AppKey')
+    client_secret = models.CharField(max_length=200, verbose_name='AppSecret')
     authorize_url = models.URLField(verbose_name='认证地址', blank=False, null=False)
     token_url = models.URLField(verbose_name='token地址', blank=False, null=False)
 
     def __str__(self):
-        return self.get_name_display()
+        return self.get_client_type_display()
 
     class Meta:
         db_table = 'oauth_client'
