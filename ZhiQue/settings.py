@@ -180,7 +180,6 @@ JWT_AUTH = {
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
     'JWT_AUTH_COOKIE': 'access_token',
     'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=1),
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'oauth.utils.jwt_response_payload_handler',
 }
 
 SITE_ID = 1

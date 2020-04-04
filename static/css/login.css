@@ -1,0 +1,9 @@
+.form-group.error input {
+    border-color: red;
+}
+
+em.error {
+    font-size: 11px;
+	color: red;
+	font-weight: 300;
+}

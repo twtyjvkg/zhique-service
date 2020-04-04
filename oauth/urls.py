@@ -7,7 +7,7 @@ __email__ = 'xuzhao@zhique.design'
 from django.conf.urls import url
 from rest_framework.routers import DefaultRouter
 
-from .views import CallbackAPIView, LoginAPIView, UserRegisterAPIView
+from .views import CallbackAPIView, TokenAPIView, UserRegisterAPIView
 from .viewsets import OAuthClientViewSet
 
 blog_router = DefaultRouter(trailing_slash=False)

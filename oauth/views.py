@@ -29,7 +29,7 @@ from yuque.client import Client
 from .forms import LoginForm
 from .models import OAuthUser
 from .serializers import TokenSerializer, UserRegisterSerializer
-from .utils import get_app_config
+from .utils import get_client
 
 
 jwt_response_payload_handler = api_settings.JWT_RESPONSE_PAYLOAD_HANDLER
@@ -51,7 +51,7 @@ class LoginView(FormView):
         return super(LoginView, self).get_context_data(**kwargs)
 
     def post(self, request, *args, **kwargs):
-        form = AuthenticationForm(data=self.request.POST, request=self.request)
+        form = LoginForm(data=self.request.POST, request=self.request)
         if form.is_valid():
             auth.login(self.request, form.get_user())
             return super(LoginView, self).form_valid(form)
@@ -94,8 +94,8 @@ class AuthorizeView(RedirectView):
         return get_redirect_uri(self.request)
 
 
-class LoginAPIView(JSONWebTokenAPIView):
-    """用户登录"""
+class TokenAPIView(JSONWebTokenAPIView):
+    """获取token"""
     serializer_class = TokenSerializer
 
     def get(self, request, *args, **kwargs):
@@ -168,8 +168,8 @@ class CallbackAPIView(APIView):
     def get(self, request, oauth_type=None, *args, **kwargs):
         next_uri = get_redirect_uri(request)
         access_token = None
-        conf = get_app_config(name=oauth_type)
-        if conf:
+        client = get_client(name=oauth_type)
+        if client:
             if oauth_type == 'yuque':
                 code = self.request.query_params['code']
                 state = self.request.query_params['state']
@@ -179,9 +179,9 @@ class CallbackAPIView(APIView):
                 next_uri = cache.get(state_cache)
                 cache.delete(state_cache)
                 yuque_client = Client()
-                response_data = Client.post_request(conf['token_url'], {
-                    'client_id': conf['app_key'],
-                    'client_secret': conf['app_secret'],
+                response_data = Client.post_request(client['token_url'], {
+                    'client_id': client['app_key'],
+                    'client_secret': client['app_secret'],
                     'code': code,
                     'grant_type': 'authorization_code'
                 })
@@ -190,7 +190,7 @@ class CallbackAPIView(APIView):
             if user.is_authenticated:
                 OAuthUser.objects.update_or_create(access_token=access_token,
                                                    user=user,
-                                                   oauth_type_id=conf['id']
+                                                   oauth_type_id=client['id']
                                                    )
 
         return HttpResponseRedirect(next_uri)
