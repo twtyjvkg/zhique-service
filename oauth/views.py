@@ -107,7 +107,9 @@ class AuthorizeView(RedirectView):
         code = request.GET.get('code')
         client = get_client_by_type(authorize_type)
         if client.get_access_token_by_code(code):
-            user = client.get_oauth_user_info()
+            oauth_user, created = client.get_oauth_user_info()
+            oauth_user.user = self.request.user
+            oauth_user.save()
         return get_redirect_uri(self.request)
 
 

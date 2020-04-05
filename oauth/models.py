@@ -18,8 +18,6 @@ class OAuthClient(BaseModelMixin):
     client_type = models.CharField('类型', max_length=10, unique=True, choices=CLIENT_TYPE, default='yuque')
     client_key = models.CharField(max_length=200, verbose_name='AppKey')
     client_secret = models.CharField(max_length=200, verbose_name='AppSecret')
-    authorize_url = models.URLField(verbose_name='认证地址', blank=False, null=False)
-    token_url = models.URLField(verbose_name='token地址', blank=False, null=False)
 
     def __str__(self):
         return self.get_client_type_display()
@@ -37,7 +35,7 @@ class OAuthUser(BaseModelMixin):
     avatar = models.URLField('头像', null=True, blank=True)
     access_token = models.CharField('access_token', max_length=200, null=False, blank=False)
     user = models.ForeignKey(User, verbose_name='用户', null=True, blank=True, on_delete=models.CASCADE)
-    oauth_type = models.ForeignKey(OAuthClient, verbose_name='oauth应用类型', on_delete=models.CASCADE)
+    client_type = models.CharField('类型', max_length=10, unique=True, default='yuque')
 
     def __str__(self):
         return self.nickname

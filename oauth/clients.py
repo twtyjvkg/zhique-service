@@ -26,12 +26,12 @@ class RequestError(Exception):
 
 class BaseOAuthClient:
     """oauth客户端基类"""
-    client_type = None
+    CLIENT_TYPE = None
     client_key = None
     client_secret = None
     access_token = None
-    authorize_url = None
-    token_url = None
+    AUTHORIZE_URL = None
+    TOKEN_URL = None
 
     def __init__(self, access_token=None):
         self.access_token = access_token
@@ -69,7 +69,7 @@ class BaseOAuthClient:
             raise ValueError
         response = func(request_url, request_data, request_header)
         if response.status_code != 200:
-            raise RequestError(self.client_type, response.status_code, response.text)
+            raise RequestError(self.CLIENT_TYPE, response.status_code, response.text)
         return response.json()
 
     @staticmethod
@@ -94,7 +94,7 @@ class BaseOAuthClient:
 
     def get_config(self):
         try:
-            config = get_object_or_404(OAuthClient, client_type=self.client_type)
+            config = get_object_or_404(OAuthClient, client_type=self.CLIENT_TYPE)
             return config
         except ValueError:
             return None
@@ -107,9 +107,11 @@ class BaseOAuthClient:
 
 class YuQueOAuthClient(BaseOAuthClient):
     """语雀客户端"""
-    client_type = 'yuque'
-    api_host = 'https://www.yuque.com/api/v2'
-    api_list = {
+    CLIENT_TYPE = 'yuque'
+    AUTHORIZE_URL = 'https://www.yuque.com/oauth2/authorize'
+    TOKEN_URL = 'https://www.yuque.com/oauth2/token'
+    API_HOST = 'https://www.yuque.com/api/v2'
+    API_LIST = {
         'user': 'user'
     }
 
@@ -117,12 +119,10 @@ class YuQueOAuthClient(BaseOAuthClient):
         config = self.get_config()
         self.client_key = config.client_key
         self.client_secret = config.client_secret
-        self.authorize_url = config.authorize_url
-        self.token_url = config.token_url
         super(YuQueOAuthClient, self).__init__(access_token=access_token)
 
     def api_request(self, api, *args, **kwargs):
-        request_url = f'{self.api_host}/{api}'
+        request_url = f'{self.API_HOST}/{api}'
         request_header = {'X-Auth-Token': self.access_token}
         return self.request(request_url, request_header=request_header, *args, **kwargs)
 
@@ -134,11 +134,11 @@ class YuQueOAuthClient(BaseOAuthClient):
             'scope': 'group:read,repo:read,topic:read,doc:read',
             'response_type': 'code',
             'redirect_uri': reverse('authorize', request=request, kwargs={
-                'authorize_type': self.client_type
+                'authorize_type': self.CLIENT_TYPE
             })
         })
         cache.set('oauth:authorize:state:{0}'.format(state), get_redirect_uri(request), timeout=60 * 60)
-        return f'{self.authorize_url}?{data}'
+        return f'{self.AUTHORIZE_URL}?{data}'
 
     def get_access_token_by_code(self, code):
         data = {
@@ -149,7 +149,7 @@ class YuQueOAuthClient(BaseOAuthClient):
             'grant_type': 'authorization_code'
         }
         try:
-            response_data = self.request(self.token_url, method='POST', request_data=data)
+            response_data = self.request(self.TOKEN_URL, method='POST', request_data=data)
             self.access_token = response_data.get('access_token')
             return self.access_token
         except RequestError:
@@ -159,12 +159,14 @@ class YuQueOAuthClient(BaseOAuthClient):
         if not self.is_authorized:
             return None
         try:
-            response_data = self.api_request(self.api_list.get('user')).get('data')
-            user = OAuthUser()
-            user.openid = response_data.get('id')
-            user.nickname = response_data.get('name')
-            user.avatar = response_data.get('avatar_url')
-            user.access_token = self.access_token
+            response_data = self.api_request(self.API_LIST.get('user')).get('data')
+            user = OAuthUser.objects.update_or_create({
+                'openid': response_data.get('id'),
+                'nickname': response_data.get('name'),
+                'avatar': response_data.get('avatar_url'),
+                'access_token': self.access_token,
+                'client_type': self.CLIENT_TYPE,
+            })
             return user
         except RequestError:
             return None
@@ -176,12 +178,12 @@ def get_oauth_clients():
         return []
     client_types = [c.client_type for c in clients]
     oauth_clients = BaseOAuthClient.__subclasses__()
-    return [c() for c in oauth_clients if c().client_type.lower() in client_types]
+    return [c() for c in oauth_clients if c().CLIENT_TYPE.lower() in client_types]
 
 
 def get_client_by_type(client_type):
     clients = get_oauth_clients()
-    finds = list(filter(lambda c: c.client_type.lower() == client_type.lower(), clients))
+    finds = list(filter(lambda c: c.CLIENT_TYPE.lower() == client_type.lower(), clients))
     if finds:
         return finds[0]
     return None
