@@ -160,7 +160,7 @@ class YuQueOAuthClient(BaseOAuthClient):
             return None
         try:
             response_data = self.api_request(self.API_LIST.get('user')).get('data')
-            user = OAuthUser.objects.update_or_create({
+            user, created = OAuthUser.objects.update_or_create({
                 'openid': response_data.get('id'),
                 'nickname': response_data.get('name'),
                 'avatar': response_data.get('avatar_url'),
