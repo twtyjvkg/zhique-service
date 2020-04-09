@@ -4,6 +4,9 @@ __title__ = ''
 __author__ = 'xuzhao'
 __email__ = 'xuzhao@zhique.design'
 
+import binascii
+import os
+
 from django.shortcuts import get_object_or_404
 from .models import OAuthClient
 
@@ -14,13 +17,15 @@ def get_client(name=None):
     :param name: 应用类型
     :return: 应用信息
     """
-    app = get_object_or_404(OAuthClient, name=name)
+    client = get_object_or_404(OAuthClient, name=name)
     client = {
-        'id': app.id,
-        'app_key': app.app_key,
-        'app_secret': app.app_secret,
-        'authorize_url': app.authorize_url,
-        'token_url': app.token_url,
+        'id': client.id,
+        'client_key': client.client_key,
+        'client_secret': client.client_secret,
     }
     return client
+
+
+def generate_token():
+    return binascii.hexlify(os.urandom(20)).decode()
 

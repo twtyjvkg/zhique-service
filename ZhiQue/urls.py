@@ -34,11 +34,11 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-                  path('swagger-ui', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+                  path('swagger-ui/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
                   url(r'^api/(?P<version>(v1|v2))/account/', include('account.urls', namespace='account')),
                   url(r'^api/(?P<version>(v1|v2))/oauth/', include('oauth.urls', namespace='oauth')),
-                  url(r'^oauth/login$', LoginView.as_view(), name='login'),
-                  url(r'^oauth/(?P<authorize_type>[a-z]+)/login$', OAuthLoginView.as_view(), name='oauth-login'),
-                  url(r'^oauth/logout$', LogoutView.as_view(), name='logout'),
-                  url(r'^oauth/(?P<authorize_type>[a-z]+)/authorize$', AuthorizeView.as_view(), name='authorize'),
+                  url(r'^oauth/login/$', LoginView.as_view(), name='login'),
+                  url(r'^oauth/(?P<authorize_type>[a-z]+)/login/$', OAuthLoginView.as_view(), name='oauth-login'),
+                  url(r'^oauth/logout/$', LogoutView.as_view(), name='logout'),
+                  url(r'^oauth/(?P<authorize_type>[a-z]+)/authorize/$', AuthorizeView.as_view(), name='authorize'),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

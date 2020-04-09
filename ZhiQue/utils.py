@@ -22,9 +22,9 @@ def get_redirect_uri(request):
     if not redirect_uri:
         redirect_uri = '/'
         return redirect_uri
-    p = urlparse(redirect_uri)
-    if p.netloc:
-        site = Site.objects.get_current().domain
-        if not p.netloc.replace('www.', '') == site.replace('www.', ''):
-            return '/'
+    # p = urlparse(redirect_uri)
+    # if p.netloc:
+    #     site = Site.objects.get_current().domain
+    #     if not p.netloc.replace('www.', '') == site.replace('www.', ''):
+    #         return '/'
     return redirect_uri

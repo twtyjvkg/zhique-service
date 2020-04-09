@@ -17,6 +17,5 @@ app_name = 'oauth'
 
 urlpatterns = [
                   url(r'^register$', UserRegisterAPIView.as_view(), name='register'),
-                  # url(r'^(?P<oauth_type>[a-z]+)/callback$', CallbackAPIView.as_view(), name='callback'),
               ] + blog_router.urls
 

@@ -1,11 +1,8 @@
-import uuid
-from datetime import datetime
 from urllib import parse
 
 from django.contrib import auth
 from django.contrib.auth import logout
 from django.core.cache import cache
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 # Create your views here.
@@ -14,25 +11,18 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import FormView, RedirectView
-from rest_framework import exceptions, status
+from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from rest_framework.views import APIView
-from rest_framework_jwt.settings import api_settings
-from rest_framework_jwt.views import JSONWebTokenAPIView
 
 from ZhiQue import permissions, mixins
 from ZhiQue.utils import get_redirect_uri
 
 from .clients import get_client_by_type
 from .forms import LoginForm
-from .models import OAuthUser
-from .serializers import TokenSerializer, UserRegisterSerializer
-from .utils import get_client
-
-
-jwt_response_payload_handler = api_settings.JWT_RESPONSE_PAYLOAD_HANDLER
+from .serializers import UserRegisterSerializer
+from .utils import generate_token
 
 
 class LoginView(FormView):
@@ -60,11 +50,13 @@ class LoginView(FormView):
         })
 
     def get_success_url(self):
-        authorize_uri = reverse('authorize')
+        authorize_uri = reverse('authorize', request=self.request,  kwargs={
+            'authorize_type': 'account'
+        })
         data = parse.urlencode({
-                            'response_type': 'token',
-                            'redirect_uri': get_redirect_uri(self.request)
-                        })
+            'response_type': 'token',
+            'redirect_uri': get_redirect_uri(self.request)
+        })
         return f'{authorize_uri}?{data}'
 
 
@@ -104,40 +96,27 @@ class AuthorizeView(RedirectView):
 
     def get_redirect_url(self, authorize_type, *args, **kwargs):
         request = self.request
-        code = request.GET.get('code')
-        client = get_client_by_type(authorize_type)
-        if client.get_access_token_by_code(code):
-            oauth_user = client.get_oauth_user_info()
-            oauth_user.user = self.request.user
-            oauth_user.save()
-        return get_redirect_uri(self.request)
-
-
-class TokenAPIView(JSONWebTokenAPIView):
-    """获取token"""
-    serializer_class = TokenSerializer
-
-    def get(self, request, *args, **kwargs):
-        pass
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.object.get('user') or request.user
-            token = serializer.object.get('token')
-            login_type = serializer.object.get('login_type')
-            response_data = jwt_response_payload_handler(login_type, user, request)
-            response = Response(response_data)
-            if api_settings.JWT_AUTH_COOKIE:
-                expiration = (datetime.utcnow() +
-                              api_settings.JWT_EXPIRATION_DELTA)
-                response.set_cookie(api_settings.JWT_AUTH_COOKIE,
-                                    token,
-                                    expires=expiration,
-                                    httponly=True)
-                return response
-
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        user = request.user
+        token = None
+        if authorize_type == 'account':
+            if user.is_authenticated:
+                token = generate_token()
+                token_user_cache_key = f'oauth:token:{token}:user:id'
+                cache.set(token_user_cache_key, user.id, timeout=60 * 60 * 24)
+        else:
+            code = request.GET.get('code')
+            client = get_client_by_type(authorize_type)
+            if client.get_access_token_by_code(code):
+                oauth_user = client.get_oauth_user_info()
+                oauth_user.user = user
+                oauth_user.save()
+        if token:
+            data = parse.urlencode({
+                'access_token': token,
+                'token_type': 'bearer'
+            })
+            return f'{get_redirect_uri(request)}#{data}'
+        return reverse('login', request=request)
 
 
 class UserRegisterAPIView(mixins.CreateModelMixin, GenericAPIView):
@@ -154,38 +133,3 @@ class UserRegisterAPIView(mixins.CreateModelMixin, GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
-
-
-# class CallbackAPIView(APIView):
-#     """oauth认证回调"""
-#     permission_classes = [permissions.AllowAny, ]
-#
-#     def get(self, request, oauth_type=None, *args, **kwargs):
-#         next_uri = get_redirect_uri(request)
-#         access_token = None
-#         client = get_client(name=oauth_type)
-#         if client:
-#             if oauth_type == 'yuque':
-#                 code = self.request.query_params['code']
-#                 state = self.request.query_params['state']
-#                 state_cache = 'oauth:authorize:state:{0}'.format(state)
-#                 if cache.ttl(state_cache) == 0:
-#                     raise exceptions.PermissionDenied('回调接口地址错误或请求超时')
-#                 next_uri = cache.get(state_cache)
-#                 cache.delete(state_cache)
-#                 yuque_client = Client()
-#                 response_data = Client.post_request(client['token_url'], {
-#                     'client_id': client['app_key'],
-#                     'client_secret': client['app_secret'],
-#                     'code': code,
-#                     'grant_type': 'authorization_code'
-#                 })
-#                 access_token = response_data.get('access_token')
-#             user = request.user
-#             if user.is_authenticated:
-#                 OAuthUser.objects.update_or_create(access_token=access_token,
-#                                                    user=user,
-#                                                    oauth_type_id=client['id']
-#                                                    )
-#
-#         return HttpResponseRedirect(next_uri)

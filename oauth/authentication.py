@@ -8,15 +8,13 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.core.cache import cache
 from django.db.models import Q
+from django.http import Http404
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication as BaseWebTokenAuthentication
-from rest_framework_jwt.settings import api_settings
+from rest_framework import exceptions
+from rest_framework.authentication import TokenAuthentication as BaseTokenAuthentication
 
 User = get_user_model()
-
-jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
-jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 
 def get_ip(request):
@@ -57,7 +55,19 @@ class EmailOrUsernameModelBackend(ModelBackend):
             return None
 
 
-class JSONWebTokenAuthentication(BaseWebTokenAuthentication):
-    pass
+class TokenAuthentication(BaseTokenAuthentication):
+    """token认证"""
+    keyword = 'bearer'
+
+    def authenticate_credentials(self, key):
+        token_user_cache_key = f'oauth:token:{key}:user:id'
+        if cache.ttl(token_user_cache_key) == 0:
+            raise exceptions.AuthenticationFailed('token无效')
+        try:
+            user_id = cache.get(token_user_cache_key)
+            user = get_object_or_404(User, id=user_id, is_active=True)
+            return user, key
+        except Http404:
+            raise exceptions.AuthenticationFailed('token无效')
 
 

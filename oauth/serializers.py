@@ -4,67 +4,18 @@ __title__ = ''
 __author__ = 'xuzhao'
 __email__ = 'xuzhao@zhique.design'
 
-from django.contrib.auth import get_user_model, authenticate
+from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from rest_framework import serializers
-from rest_framework_jwt.compat import PasswordField, get_username_field, Serializer
-from rest_framework_jwt.settings import api_settings
 
-from account.validators import UsernameValidator
 from .models import OAuthClient
 
 User = get_user_model()
-
-jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 LOGIN_TYPE = (
     ('account', '账户密码'),
     ('email', '邮箱验证码')
 )
-
-
-class TokenSerializer(Serializer):
-    """token序列化"""
-
-    def __init__(self, *args, **kwargs):
-        """动态添加用户名和密码字段"""
-        super(TokenSerializer, self).__init__(*args, **kwargs)
-        self.fields[self.username_field] = serializers.CharField(validators=[UsernameValidator()])
-        self.fields['type'] = serializers.ChoiceField(choices=LOGIN_TYPE, write_only=True)
-        self.fields['password'] = PasswordField(write_only=True)
-
-    @property
-    def username_field(self):
-        return get_username_field()
-
-    def validate(self, attrs):
-        credentials = {
-            self.username_field: attrs.get(self.username_field),
-            'password': attrs.get('password'),
-            'login_type': attrs.get('type')
-        }
-
-        if all(credentials.values()):
-            user = authenticate(**credentials, request=self.context['request'])
-
-            if user:
-                if not user.is_active:
-                    raise serializers.ValidationError('用户不可用')
-
-                payload = jwt_payload_handler(user)
-
-                return {
-                    'token': jwt_encode_handler(payload),
-                    'user': user,
-                    'login_type': attrs.get('type'),
-                }
-            else:
-                raise serializers.ValidationError('用户名或者密码错误')
-        else:
-            raise serializers.ValidationError(
-                '请输入"{username_field}"和密码'.format(username_field=self.username_field)
-            )
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -100,7 +51,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         fields = ('username', 'code', 'email', 'password')
 
 
-class OAuthAppSerializer(serializers.ModelSerializer):
+class OAuthClientSerializer(serializers.ModelSerializer):
     """oauth应用序列化"""
     class Meta:
         model = OAuthClient

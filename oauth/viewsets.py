@@ -9,13 +9,13 @@ from rest_framework.response import Response
 
 from ZhiQue import mixins, permissions
 from .models import OAuthClient
-from .serializers import OAuthAppSerializer
+from .serializers import OAuthClientSerializer
 
 
 class OAuthClientViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
     """oauth应用视图集"""
     queryset = OAuthClient.objects.all()
-    serializer_class = OAuthAppSerializer
+    serializer_class = OAuthClientSerializer
 
     def get_permissions(self):
         return [permissions.AllowAny()]

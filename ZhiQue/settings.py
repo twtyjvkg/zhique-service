@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'oauth.apps.OAuthConfig',
     'rest_framework',
+    'rest_framework.authtoken',
     'drf_yasg'
 ]
 
@@ -169,22 +170,9 @@ REST_FRAMEWORK = {
     'ALLOWED_VERSIONS': ['v1', 'v2'],
     'DEFAULT_PAGINATION_CLASS': 'ZhiQue.utils.Pagination',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'oauth.authentication.JSONWebTokenAuthentication',
+        'oauth.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
 }
 
-# JWT configuration
-# http://jpadilla.github.io/django-rest-framework-jwt/#additional-settings
-JWT_AUTH = {
-    'JWT_AUTH_HEADER_PREFIX': 'JWT',
-    'JWT_AUTH_COOKIE': 'access_token',
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=1),
-}
-
 SITE_ID = 1
-# drf-yasg configuration
-# https://drf-yasg.readthedocs.io/en/stable/settings.html
-SWAGGER_SETTINGS = {
-    # 'USE_SESSION_AUTH': False,
-}
