@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'ZhiQue.middleware.DataFormatMiddleware',
 ]
 
 ROOT_URLCONF = 'ZhiQue.urls'
@@ -173,6 +174,8 @@ REST_FRAMEWORK = {
         'oauth.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
+    'EXCEPTION_HANDLER': 'ZhiQue.utils.zhique_exception_handler'
 }
 
-SITE_ID = 1
+SERVICE_BASE_URL = 'http://127.0.0.1:8080'
+FRONT_BASE_URL = 'http://127.0.0.1:8000'
