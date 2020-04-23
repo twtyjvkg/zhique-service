@@ -28,10 +28,10 @@ def zhique_exception_handler(exc, context):
 
     # Now add the HTTP status code to the response.
     if response is not None:
-        response.data['errorCode'] = response.status_code
+        response.data['error_code'] = response.status_code
         response.data['success'] = False
-        response.data['errorMessage'] = response.data['detail']
-        response.data['showType'] = 1
+        response.data['error_message'] = response.data['detail']
+        response.data['show_type'] = 1
         del response.data['detail']
 
     return response
