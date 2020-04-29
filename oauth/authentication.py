@@ -65,6 +65,9 @@ class TokenAuthentication(BaseTokenAuthentication):
             raise exceptions.AuthenticationFailed('token无效')
         try:
             user_id = cache.get(token_user_cache_key)
+            user_token_cache_key = f'oauth:user:token:user:id:{user_id}:token'
+            if cache.ttl(user_token_cache_key) != 0 or cache.get(user_token_cache_key) != key:
+                raise exceptions.AuthenticationFailed('token错误')
             user = get_object_or_404(User, id=user_id, is_active=True)
             return user, key
         except Http404:
