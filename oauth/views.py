@@ -82,11 +82,11 @@ class LogoutView(RedirectView):
     def get(self, request, *args, **kwargs):
         user = request.user
         user_token_cache_key = f'oauth:user:id:{user.id}:token'
-        if cache.ttl(user_token_cache_key):
+        if cache.ttl(user_token_cache_key) != 0:
             token = cache.get(user_token_cache_key)
             cache.delete(user_token_cache_key)
             token_user_cache_key = f'oauth:token:{token}:user:id'
-            if cache.ttl(token_user_cache_key):
+            if cache.ttl(token_user_cache_key) != 0:
                 cache.delete(token_user_cache_key)
         logout(request)
         return super(LogoutView, self).get(request, *args, **kwargs)
@@ -112,7 +112,7 @@ class AuthorizeView(RedirectView):
                 token_user_cache_key = f'oauth:token:{token}:user:id'
                 user_token_cache_key = f'oauth:user:id:{user.id}:token'
                 cache.set(token_user_cache_key, user.id, timeout=60 * 60 * 24)
-                cache.set(user_token_cache_key, token)
+                cache.set(user_token_cache_key, token, timeout=None)
         else:
             code = request.GET.get('code')
             client = get_client_by_type(authorize_type)
