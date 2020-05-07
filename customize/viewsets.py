@@ -4,9 +4,7 @@ __title__ = ''
 __author__ = 'xuzhao'
 __email__ = 'xuzhao@zhique.design'
 
-from rest_framework import viewsets
-
-from ZhiQue import mixins, permissions
+from ZhiQue import mixins
 from ZhiQue.mixins import ViewSetMixin
 from .models import Card
 
