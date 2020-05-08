@@ -32,7 +32,7 @@ class ArticleHookSerializer(serializers.Serializer):
     title = serializers.CharField()
     slug = serializers.SlugField()
     book_id = serializers.IntegerField()
-    book = serializers.DictField()
+    book = BookSerializer()
     body = serializers.CharField()
     created_at = serializers.DateTimeField()
     updated_at = serializers.DateTimeField()
