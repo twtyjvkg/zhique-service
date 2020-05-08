@@ -6,18 +6,15 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 from ZhiQue import permissions
-from .models import Article
-from .serializers import ArticleSerializer
+from .serializers import ArticleHookSerializer
 
 
-class WebHooksAPIView(GenericAPIView):
-    """语雀webHook"""
+class DocHookAPIView(GenericAPIView):
     permission_classes = (permissions.AllowAny,)
-
-    serializer_class = ArticleSerializer
+    serializer_class = ArticleHookSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data.get('data'))
         serializer.is_valid()
-        _, created = Article.objects.update_or_create(serializer.data)
-        return Response(status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        serializer.save()
+        return Response(status=status.HTTP_200_OK)
