@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'oauth.apps.OAuthConfig',
     'customize.apps.CustomizeConfig',
-    'blog.apps.BlogConfig',
+    'yuque.apps.YuQueConfig',
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg'
