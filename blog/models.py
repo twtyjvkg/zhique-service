@@ -15,10 +15,6 @@ class BaseModel(BaseModelMixin, models.Model):
 
 
 class Article(BaseModel):
-    STATUS_CHOICES = (
-        (True, '草稿'),
-        (False, '发表'),
-    )
     title = models.CharField('标题', max_length=200, unique=True)
     body = models.TextField('正文', default=None)
 
