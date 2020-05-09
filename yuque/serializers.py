@@ -30,6 +30,7 @@ class BookHookSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     slug = serializers.SlugField()
     name = serializers.CharField()
+    description = serializers.CharField()
 
     def update(self, instance, validated_data):
         pass

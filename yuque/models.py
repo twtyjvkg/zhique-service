@@ -19,6 +19,7 @@ class Book(BaseModel):
     """语雀仓库"""
     id = models.PositiveIntegerField('仓库编号', primary_key=True)
     name = models.CharField('仓库名称', max_length=50)
+    description = models.TextField('介绍', default=None)
 
     class Meta:
         verbose_name = '仓库'
