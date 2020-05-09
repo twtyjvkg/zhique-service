@@ -6,12 +6,12 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 from ZhiQue import permissions
-from .serializers import ArticleHookSerializer
+from .serializers import DocHookSerializer
 
 
 class DocHookAPIView(GenericAPIView):
     permission_classes = (permissions.AllowAny,)
-    serializer_class = ArticleHookSerializer
+    serializer_class = DocHookSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data.get('data'))

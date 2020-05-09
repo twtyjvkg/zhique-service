@@ -25,14 +25,27 @@ class DocSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ArticleHookSerializer(serializers.Serializer):
+class BookHookSerializer(serializers.Serializer):
+    """仓库hook序列化"""
+    id = serializers.IntegerField()
+    slug = serializers.SlugField()
+    name = serializers.CharField()
+
+    def update(self, instance, validated_data):
+        pass
+
+    def create(self, validated_data):
+        pass
+
+
+class DocHookSerializer(serializers.Serializer):
     """文章hook序列化"""
 
     id = serializers.IntegerField()
     title = serializers.CharField()
     slug = serializers.SlugField()
     book_id = serializers.IntegerField()
-    book = BookSerializer()
+    book = BookHookSerializer()
     body = serializers.CharField()
     created_at = serializers.DateTimeField()
     updated_at = serializers.DateTimeField()
@@ -41,7 +54,10 @@ class ArticleHookSerializer(serializers.Serializer):
         pass
 
     def create(self, validated_data):
-        pass
+        Book.objects.update_or_create(validated_data['book'], id=validated_data['book_id'])
+        del validated_data['book']
+        doc, _ = Doc.objects.update_or_create(validated_data, id=validated_data['id'])
+        return doc
 
 
 
