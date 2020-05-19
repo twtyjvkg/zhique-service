@@ -37,16 +37,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'drf_yasg',
+    'corsheaders',
     'account.apps.AccountConfig',
     'oauth.apps.OAuthConfig',
     'customize.apps.CustomizeConfig',
     'yuque.apps.YuQueConfig',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'drf_yasg'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -162,6 +164,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+# Settings for REST framework are all namespaced in the REST_FRAMEWORK setting.
+# https://www.django-rest-framework.org/api-guide/settings/
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
@@ -179,5 +183,9 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'ZhiQue.utils.zhique_exception_handler'
 }
 
-SERVICE_BASE_URL = 'http://127.0.0.1:8080'
-FRONT_BASE_URL = 'http://127.0.0.1:8000'
+SERVICE_BASE_URL = 'http://localhost:8080'
+FRONT_BASE_URL = 'http://localhost:3000'
+
+CORS_ORIGIN_WHITELIST = [
+    FRONT_BASE_URL
+]

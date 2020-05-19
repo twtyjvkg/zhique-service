@@ -4,6 +4,7 @@ django
 django-redis
 
 # drf
+django-cors-headers
 djangorestframework
 drf-yasg
 
