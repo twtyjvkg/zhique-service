@@ -184,7 +184,7 @@ REST_FRAMEWORK = {
 }
 
 SERVICE_BASE_URL = 'http://localhost:8080'
-FRONT_BASE_URL = 'http://localhost:3000'
+FRONT_BASE_URL = 'http://localhost:8000'
 
 CORS_ORIGIN_WHITELIST = [
     FRONT_BASE_URL

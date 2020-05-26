@@ -17,3 +17,17 @@ class Card(BaseModelMixin):
     class Meta:
         verbose_name = '卡片'
         verbose_name_plural = verbose_name
+
+
+class GlobalConfig(BaseModelMixin):
+    """全局配置"""
+    site_name = models.CharField("网站名称", max_length=200, null=False, blank=False)
+    icp_code = models.CharField('ICP备案号', max_length=50, null=True, blank=True)
+    icp_url = models.URLField('ICP备案查询地址')
+    police_icp_code = models.CharField('公安备案号', max_length=50, null=True, blank=True)
+    police_icp_url = models.URLField('公安备案查询地址')
+
+    class Meta:
+        db_table = 'customize_global_config'
+        verbose_name = '全局配置'
+        verbose_name_plural = verbose_name

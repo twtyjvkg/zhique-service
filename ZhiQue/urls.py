@@ -38,6 +38,7 @@ urlpatterns = [
                   url(r'^(?P<version>(v1|v2))/account/', include('account.urls', namespace='account')),
                   url(r'^(?P<version>(v1|v2))/oauth/', include('oauth.urls', namespace='oauth')),
                   url(r'^(?P<version>(v1|v2))/yuque/', include('yuque.urls', namespace='yuque')),
+                  url(r'^(?P<version>(v1|v2))/customize/', include('customize.urls', namespace='customize')),
                   url(r'^oauth/login$', LoginView.as_view(), name='login'),
                   url(r'^oauth/(?P<authorize_type>[a-z]+)/login/$', OAuthLoginView.as_view(), name='oauth-login'),
                   url(r'^oauth/logout$', LogoutView.as_view(), name='logout'),
