@@ -20,12 +20,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ')3$4$0w@@lyt-z91+1ar3ikaf!-ygkj%lf8hcibo05let_vt0w'
+SECRET_KEY = os.environ.get('ZHIQUE_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('ZHIQUE_DEBUG')
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.environ.get('ZHIQUE_ALLOWED_HOSTS').split(',')
 
 
 # Application definition
@@ -87,11 +87,11 @@ WSGI_APPLICATION = 'ZhiQue.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'zhique_service',
-        'USER': 'zhique_service',
-        'PASSWORD': 'zhique_service',
-        'HOST': '127.0.0.1',
-        'PORT': 3306,
+        'NAME': os.environ.get('ZHIQUE_DB_NAME'),
+        'USER': os.environ.get('ZHIQUE_DB_USER'),
+        'PASSWORD': os.environ.get('ZHIQUE_DB_PASSWORD'),
+        'HOST': os.environ.get('ZHIQUE_DB_HOST'),
+        'PORT': os.environ.get('ZHIQUE_DB_PORT'),
         'OPTIONS': {
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
         }
@@ -102,8 +102,8 @@ CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
         'LOCATION': 'redis://{url}:{port}/0'.format(
-            url='127.0.0.1',
-            port=6379
+            url=os.environ.get('ZHIQUE_REDIS_HOST'),
+            port=os.environ.get('ZHIQUE_REDIS_PORT')
         ),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
@@ -161,8 +161,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, 'static'),
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'collectedstatic')
 
 # Settings for REST framework are all namespaced in the REST_FRAMEWORK setting.
 # https://www.django-rest-framework.org/api-guide/settings/
@@ -183,8 +185,8 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'ZhiQue.utils.zhique_exception_handler'
 }
 
-SERVICE_BASE_URL = 'http://localhost:8080'
-FRONT_BASE_URL = 'http://localhost:8000'
+SERVICE_BASE_URL = os.environ.get('ZHIQUE_SERVICE_BASE_URL')
+FRONT_BASE_URL = os.environ.get('ZHIQUE_FRONT_BASE_URL')
 
 CORS_ORIGIN_WHITELIST = [
     FRONT_BASE_URL

@@ -6,8 +6,8 @@ __email__ = 'xuzhao@zhique.design'
 
 from ZhiQue import mixins
 from ZhiQue.mixins import ViewSetMixin
-from .models import Card, GlobalConfig
-from .serializers import GlobalConfigSerializer
+from .models import Card, SiteProfile
+from .serializers import SiteProfileSerializer
 
 
 class CardViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin, ViewSetMixin):
@@ -15,7 +15,7 @@ class CardViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateM
     queryset = Card.objects.all()
 
 
-class GlobalConfigViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin, ViewSetMixin):
-    """卡片"""
-    queryset = GlobalConfig.objects.all()
-    serializer_class = GlobalConfigSerializer
+class SiteProfileViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin, ViewSetMixin):
+    """网站配置文件"""
+    queryset = SiteProfile.objects.all()
+    serializer_class = SiteProfileSerializer

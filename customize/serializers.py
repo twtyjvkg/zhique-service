@@ -6,13 +6,13 @@ __email__ = 'xuzhao@zhique.design'
 
 from rest_framework import serializers
 
-from .models import GlobalConfig
+from .models import SiteProfile
 
 
-class GlobalConfigSerializer(serializers.ModelSerializer):
-    """全局配置序列化"""
+class SiteProfileSerializer(serializers.ModelSerializer):
+    """网站配置文件序列化"""
     class Meta:
-        model = GlobalConfig
+        model = SiteProfile
         fields = '__all__'
         read_only_fields = ('is_active',)
 
