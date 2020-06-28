@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('ZHIQUE_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('ZHIQUE_DEBUG')
+DEBUG = True if os.environ.get('ZHIQUE_DEBUG') == 'True' else False
 
 ALLOWED_HOSTS = os.environ.get('ZHIQUE_ALLOWED_HOSTS').split(',')
 
