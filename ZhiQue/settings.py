@@ -191,3 +191,38 @@ FRONT_BASE_URL = os.environ.get('ZHIQUE_FRONT_BASE_URL')
 CORS_ORIGIN_WHITELIST = [
     FRONT_BASE_URL
 ]
+
+# email
+# https://docs.djangoproject.com/en/3.0/topics/email/
+# 邮件系统设置
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# 是否使用TLS安全传输协议
+EMAIL_USE_TLS = False
+# 是否使用SSL加密，qq企业邮箱要求使用
+EMAIL_USE_SSL = True
+# SMTP服务器
+EMAIL_HOST = 'smtp.ym.163.com'
+# SMTP服务器端口
+EMAIL_PORT = 994
+# 发件人
+EMAIL_HOST_USER = '系统通知'
+# 默认发件人邮箱
+DEFAULT_FROM_EMAIL = 'notice@xuzhao.xin'
+# POP3/SMTP 授权码
+# IMAP/SMTP 授权码
+EMAIL_HOST_PASSWORD = os.environ.get('ZHIQUE_EMAIL_HOST_PASSWORD')
+
+# 网站异常通知
+ADMINS = [('admin', 'admin@zhique.com')]
+
+# logging
+# https://docs.djangoproject.com/en/3.0/topics/logging/
+LOGGING = {
+    'version': 1,
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    }
+}
