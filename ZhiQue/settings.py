@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
-    'drf_yasg',
+    'drf_yasg2',
     'corsheaders',
     'account.apps.AccountConfig',
     'oauth.apps.OAuthConfig',
