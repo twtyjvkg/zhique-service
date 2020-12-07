@@ -23,9 +23,9 @@ class SiteProfile(BaseModelMixin):
     """网站配置文件"""
     site_name = models.CharField("网站名称", max_length=200, null=False, blank=False)
     icp_code = models.CharField('ICP备案号', max_length=50, null=True, blank=True)
-    icp_url = models.URLField('ICP备案查询地址')
+    icp_url = models.URLField('ICP备案查询地址', null=True, blank=True)
     police_icp_code = models.CharField('公安备案号', max_length=50, null=True, blank=True)
-    police_icp_url = models.URLField('公安备案查询地址')
+    police_icp_url = models.URLField('公安备案查询地址', null=True, blank=True)
 
     class Meta:
         db_table = 'customize_site_profile'

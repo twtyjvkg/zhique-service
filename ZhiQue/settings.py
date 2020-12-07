@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'oauth.apps.OAuthConfig',
     'customize.apps.CustomizeConfig',
     'yuque.apps.YuQueConfig',
+    'attachment.apps.AttachmentConfig'
 ]
 
 MIDDLEWARE = [
