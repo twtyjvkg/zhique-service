@@ -183,7 +183,7 @@ REST_FRAMEWORK = {
         'oauth.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
-    'EXCEPTION_HANDLER': 'ZhiQue.utils.zhique_exception_handler'
+    # 'EXCEPTION_HANDLER': 'ZhiQue.utils.zhique_exception_handler'
 }
 
 SERVICE_BASE_URL = os.environ.get('ZHIQUE_SERVICE_BASE_URL')

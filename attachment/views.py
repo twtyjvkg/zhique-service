@@ -1,5 +1,4 @@
 from django.http import JsonResponse, HttpResponse
-from rest_framework.reverse import reverse
 from django.shortcuts import render
 
 # Create your views here.
@@ -21,7 +20,7 @@ class AttachmentUploadView(APIView):
         except MultiValueDictKeyError:
             raise ValidationError('参数错误')
         attachment = attachment_storage.save(file.name, file)
-        return JsonResponse({'download_url': reverse('attachment:download', request=request, kwargs={ 'attachment_id': attachment.file_id })}, status=status.HTTP_201_CREATED)
+        return JsonResponse({'download_url': attachment.get_url(request)}, status=status.HTTP_201_CREATED)
 
 
 class AttachmentDownloadView(APIView):

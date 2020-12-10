@@ -1,6 +1,8 @@
 from django.db import models
 
 # Create your models here.
+from rest_framework.reverse import reverse
+
 from ZhiQue.mixins import BaseModelMixin
 import uuid
 
@@ -22,3 +24,7 @@ class Attachment(BaseModelMixin):
     class Meta:
         verbose_name = '附件'
         verbose_name_plural = verbose_name
+
+    def get_url(self, request):
+        return reverse('attachment:download', request=request, kwargs={ 'attachment_id': self.file_id })
+
