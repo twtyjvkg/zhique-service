@@ -3,7 +3,6 @@
 __title__ = ''
 __author__ = 'xuzhao'
 __email__ = 'xuzhao@zhique.design'
-
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMultiAlternatives
 from rest_framework.pagination import PageNumberPagination
@@ -60,3 +59,4 @@ def mail_admins(subject, message, fail_silently=False, connection=None,
     if html_message:
         mail.attach_alternative(html_message, 'text/html')
     mail.send(fail_silently=fail_silently)
+

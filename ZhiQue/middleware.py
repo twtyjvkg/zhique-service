@@ -10,15 +10,13 @@ import re
 from django.utils.deprecation import MiddlewareMixin
 
 
-def hump2underline(hunp_str):
+def hump_to_underline(hump_str):
     p = re.compile(r'([a-z]|\d)([A-Z])')
-    sub = re.sub(p, r'\1_\2', hunp_str).lower()
-    return sub
+    return re.sub(p, r'\1_\2', hump_str).lower()
 
 
-def underline2hump(underline_str):
-    sub = re.sub(r'(_\w)', lambda x: x.group(1)[1].upper(), underline_str)
-    return sub
+def underline_to_hump(underline_str):
+    return re.sub(r'(_\w)', lambda x: x.group(1)[1].upper(), underline_str)
 
 
 def underline_dict(params):
@@ -26,7 +24,7 @@ def underline_dict(params):
     if isinstance(params, dict):
         new_params = {}
         for k, v in params.items():
-            new_params[hump2underline(k)] = underline_dict(params[k])
+            new_params[hump_to_underline(k)] = underline_dict(params[k])
     elif isinstance(params, list):
         new_params = []
         for param in params:
@@ -39,7 +37,7 @@ def camel_dict(params):
     if isinstance(params, dict):
         new_params = {}
         for k, v in params.items():
-            new_params[underline2hump(k)] = camel_dict(params[k])
+            new_params[underline_to_hump(k)] = camel_dict(params[k])
     elif isinstance(params, list):
         new_params = []
         for param in params:
