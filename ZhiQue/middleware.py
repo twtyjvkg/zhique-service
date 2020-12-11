@@ -59,14 +59,15 @@ class DataFormatMiddleware(MiddlewareMixin):
             return None
 
     @staticmethod
-    def process_response(request, response):
+    def process_response(_, response):
         if response.status_code == 200:
             try:
-                response_data = camel_dict(response.data)
-                response.data = response_data
-                response._is_rendered = False
-                response.render()
+                if hasattr(response, 'data'):
+                    response_data = camel_dict(response.data)
+                    response.data = response_data
+                    response._is_rendered = False
+                    response.render()
             except Exception as e:
-                print(e)
+                raise e
         return response
 
