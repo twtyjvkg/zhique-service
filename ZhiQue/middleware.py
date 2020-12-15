@@ -53,21 +53,23 @@ class DataFormatMiddleware(MiddlewareMixin):
             request_data = underline_dict(request.GET)
             request.GET = request_data
         elif request.method == "POST" or request.method == "DELETE":
-            req_body = json.loads(request.body.decode('utf-8'))
-            request_data = underline_dict(req_body)
-            request._body = json.dumps(request_data).encode('utf-8')
+            request_body = request.body.decode('utf-8')
+            if isinstance(request_body, dict):
+                request_data = underline_dict(request_body)
+                request._body = json.dumps(request_data).encode('utf-8')
             return None
 
     @staticmethod
     def process_response(_, response):
-        if response.status_code == 200:
-            try:
-                if hasattr(response, 'data'):
-                    response_data = camel_dict(response.data)
-                    response.data = response_data
-                    response._is_rendered = False
-                    response.render()
-            except Exception as e:
-                raise e
+        if hasattr(response, 'accepted_media_type') and response.accepted_media_type == 'application/json':
+            if response.status_code == 200:
+                try:
+                    if hasattr(response, 'data'):
+                        response_data = camel_dict(response.data)
+                        response.data = response_data
+                        response._is_rendered = False
+                        response.render()
+                except Exception as e:
+                    raise e
         return response
 

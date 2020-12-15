@@ -44,4 +44,5 @@ urlpatterns = [
                   url(r'^oauth/logout$', LogoutView.as_view(), name='logout'),
                   url(r'^oauth/(?P<authorize_type>[a-z]+)/authorize/$', AuthorizeView.as_view(), name='authorize'),
                   url(r'^(?P<version>(v1|v2))/attachment/', include('attachment.urls', namespace='attachment')),
+                  url(r'^(?P<version>(v1|v2))/blog/', include('blog.urls', namespace='blog')),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

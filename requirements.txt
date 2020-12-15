@@ -7,6 +7,7 @@ django-redis
 django-cors-headers
 djangorestframework
 drf-yasg2
+django-filter
 
 # yuque
 requests

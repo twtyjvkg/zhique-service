@@ -29,5 +29,5 @@ class AttachmentDownloadView(APIView):
     def get(self, request, version, attachment_id=None):
         attachment = attachment_storage.open(attachment_id)
         response = HttpResponse(attachment, content_type=attachment.mimetype)
-        response['Content-disposition'] = 'inline;filename={name}'.format(name=attachment.filename).encode('utf-8')
+        response['Content-Disposition'] = 'attachment;filename={name}'.format(name=attachment.filename).encode('utf-8')
         return response

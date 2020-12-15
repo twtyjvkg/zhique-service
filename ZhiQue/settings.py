@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'oauth.apps.OAuthConfig',
     'customize.apps.CustomizeConfig',
     'yuque.apps.YuQueConfig',
-    'attachment.apps.AttachmentConfig'
+    'attachment.apps.AttachmentConfig',
+    'blog.apps.BlogConfig'
 ]
 
 MIDDLEWARE = [
@@ -173,7 +174,7 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'ZhiQue.permissions.IsAdminUser',
     ),
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
     'DEFAULT_VERSION': 'v1',

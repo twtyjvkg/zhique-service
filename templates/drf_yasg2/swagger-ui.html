@@ -11,12 +11,12 @@
 
     {% block favicon %}
         {# -- Maybe replace the favicon -- #}
-        <link rel="icon" type="image/png" href="{% static 'drf-yasg/swagger-ui-dist/favicon-32x32.png' %}"/>
+        <link rel="icon" type="image/png" href="{% static 'drf_yasg2/swagger-ui-dist/favicon-32x32.png' %}"/>
     {% endblock %}
 
     {% block main_styles %}
-        <link rel="stylesheet" type="text/css" href="{% static 'drf-yasg/style.css' %}"/>
-        <link rel="stylesheet" type="text/css" href="{% static 'drf-yasg/swagger-ui-dist/swagger-ui.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'drf_yasg2/style.css' %}"/>
+        <link rel="stylesheet" type="text/css" href="{% static 'drf_yasg2/swagger-ui-dist/swagger-ui.css' %}">
     {% endblock %}
     {% block extra_styles %}
         {# -- Add any additional CSS scripts here -- #}
@@ -39,32 +39,33 @@
 <script id="oauth2-config" type="application/json">{{ oauth2_config | safe }}</script>
 
 {% block main_scripts %}
-    <script src="{% static 'drf-yasg/swagger-ui-dist/swagger-ui-bundle.js' %}"></script>
-    <script src="{% static 'drf-yasg/swagger-ui-dist/swagger-ui-standalone-preset.js' %}"></script>
-    <script src="{% static 'drf-yasg/insQ.min.js' %}"></script>
-    <script src="{% static 'drf-yasg/immutable.min.js' %}"></script>
-    <script src="{% static 'drf-yasg/url-polyfill.min.js' %}"></script>
-    <script src="{% static 'drf-yasg/swagger-ui-init.js' %}"></script>
+    <script src="{% static 'drf_yasg2/swagger-ui-dist/swagger-ui-bundle.js' %}"></script>
+    <script src="{% static 'drf_yasg2/swagger-ui-dist/swagger-ui-standalone-preset.js' %}"></script>
+    <script src="{% static 'drf_yasg2/insQ.min.js' %}"></script>
+    <script src="{% static 'drf_yasg2/immutable.min.js' %}"></script>
+    <script src="{% static 'drf_yasg2/url-polyfill.min.js' %}"></script>
+    <script src="{% static 'drf_yasg2/swagger-ui-init.js' %}"></script>
 {% endblock %}
 {% block extra_scripts %}
     {# -- Add any additional scripts here -- #}
 {% endblock %}
 
-<a id="oauth2-redirect-url" href="{% static 'drf-yasg/swagger-ui-dist/oauth2-redirect.html' %}" class="hidden"></a>
+<a id="oauth2-redirect-url" href="{% static 'drf_yasg2/swagger-ui-dist/oauth2-redirect.html' %}" class="hidden"></a>
 
-<div id="django-session-auth" class="hidden">
-    {% block session_auth_button %}
-        {% csrf_token %}
+{% if USE_SESSION_AUTH %}
+    <div id="django-session-auth" class="hidden">
+        {% block session_auth_button %}
+            {% csrf_token %}
 
-        {% block user_context_message %}
-            {% if request.user.is_authenticated %}
-                <div class="hello">
-                    <span class="label label-primary">{{ request.user }}</span>
-                </div>
-            {% endif %}
-        {% endblock %}
+            {% block user_context_message %}
+                {% if request.user.is_authenticated %}
+                    <div class="hello">
+                        <span class="django-session">Django</span> <span
+                            class="label label-primary">{{ request.user }}</span>
+                    </div>
+                {% endif %}
+            {% endblock %}
 
-        {% if USE_SESSION_AUTH %}
             {% if request.user.is_authenticated %}
                 <div class='btn authorize'>
                     <a id="auth" class="header__btn" href="{{ LOGOUT_URL }}?redirect_uri={{ request.path }}" data-sw-translate>
@@ -82,10 +83,9 @@
                     </a>
                 </div>
             {% endif %}
-        {%  endif %}
-
-    {% endblock %}
-</div>
+        {% endblock %}
+    </div>
+{% endif %}
 </body>
 
 </html>
