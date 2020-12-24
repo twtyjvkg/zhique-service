@@ -17,6 +17,7 @@ from .models import Category, Article, Tag
 class CategoryViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin,
                       mixins.RetrieveModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
     queryset = Category.objects.all()
+    permission_classes = (permissions.AllowAny,)
     filter_class = CategoryFilter
 
     def get_serializer_class(self):
@@ -29,6 +30,7 @@ class CategoryViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.Upd
 class TagViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.RetrieveModelMixin,
                  mixins.DestroyModelMixin, viewsets.GenericViewSet):
     queryset = Tag.objects.all()
+    permission_classes = (permissions.AllowAny,)
     serializer_class = TagSerializer
 
 

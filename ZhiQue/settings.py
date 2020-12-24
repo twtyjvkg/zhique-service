@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg2',
+    'django_filters',
     'corsheaders',
     'account.apps.AccountConfig',
     'oauth.apps.OAuthConfig',
@@ -184,6 +185,9 @@ REST_FRAMEWORK = {
         'oauth.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
     # 'EXCEPTION_HANDLER': 'ZhiQue.utils.zhique_exception_handler'
 }
 

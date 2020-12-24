@@ -49,15 +49,10 @@ class DataFormatMiddleware(MiddlewareMixin):
 
     @staticmethod
     def process_request(request):
-        if request.method == "GET":
-            request_data = underline_dict(request.GET)
-            request.GET = request_data
-        elif request.method == "POST" or request.method == "DELETE":
-            request_body = request.body.decode('utf-8')
-            if isinstance(request_body, dict):
-                request_data = underline_dict(request_body)
-                request._body = json.dumps(request_data).encode('utf-8')
-            return None
+        if request.GET:
+            request.GET = underline_dict(request.GET)
+        if request.POST:
+            request.POST = underline_dict(request.POST)
 
     @staticmethod
     def process_response(_, response):
