@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 import re
 
-from django.utils.safestring import mark_safe
 from rest_framework import serializers
 
+from ZhiQue.utils.markdown import markdown_renderer
 from .relations import ArticleCategoryField
 from .utils import truncate_content
 from .models import Category, Article, Tag
@@ -62,7 +62,7 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
-class ArticleSerializer(serializers.ModelSerializer):
+class ArticleListSerializer(serializers.ModelSerializer):
     category = ArticleCategoryField(read_only=True)
     body = serializers.SerializerMethodField(read_only=True)
     url = serializers.SerializerMethodField(read_only=True)
@@ -70,7 +70,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_body(obj):
         reg = re.compile('<[^>]*>')
-        return truncate_content(mark_safe(reg.sub('', obj.body)), length=100)
+        return truncate_content(markdown_renderer(obj.body), length=300)
 
     @staticmethod
     def get_url(obj):
@@ -78,7 +78,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = '__all__'
+        fields = ('id', 'title', 'url', 'category', 'body', 'publish_time', 'views')
 
 
 class ArticleDetailSerializer(serializers.ModelSerializer):
@@ -96,15 +96,3 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
         model = Article
         fields = '__all__'
         read_only_fields = ('views', 'created_time')
-
-
-class HotArticleSerializer(serializers.ModelSerializer):
-    url = serializers.SerializerMethodField(read_only=True)
-
-    @staticmethod
-    def get_url(obj):
-        return obj.get_absolute_url()
-
-    class Meta:
-        model = Article
-        fields = ('id', 'title', 'url', 'views')

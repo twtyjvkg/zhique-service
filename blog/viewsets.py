@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from ZhiQue import permissions
 from ZhiQue import mixins
 from .filters import CategoryFilter, ArticleFilter
-from .serializers import CategorySerializer, ArticleSerializer, HotArticleSerializer, ArticleDetailSerializer, \
+from .serializers import CategorySerializer, ArticleListSerializer, ArticleDetailSerializer, \
     TagSerializer, CategoryDetailSerializer
 from .models import Category, Article, Tag
 
@@ -37,14 +37,14 @@ class TagViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateMo
 class ArticleViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
                      viewsets.GenericViewSet):
     queryset = Article.objects.all()
-    serializer_class = ArticleSerializer
+    serializer_class = ArticleListSerializer
     filter_class = ArticleFilter
 
     def get_serializer_class(self):
         action = self.action
         if action in ('create', 'retrieve', 'update', 'partial_update'):
             return ArticleDetailSerializer
-        return ArticleSerializer
+        return ArticleListSerializer
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -55,5 +55,11 @@ class ArticleViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.Retr
 
 class HotArticleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Article.objects.filter(views__gt=0).order_by('-views')[:5]
-    serializer_class = HotArticleSerializer
+    serializer_class = ArticleListSerializer
+    permission_classes = (permissions.AllowAny,)
+
+
+class LastArticleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Article.objects.order_by('-publish_time')[:5]
+    serializer_class = ArticleListSerializer
     permission_classes = (permissions.AllowAny,)

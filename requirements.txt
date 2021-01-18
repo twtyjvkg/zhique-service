@@ -11,3 +11,7 @@ django-filter
 
 # yuque
 requests
+
+# blog
+mistune
+pygments
