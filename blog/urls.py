@@ -1,7 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from django.conf.urls import url
 from rest_framework.routers import DefaultRouter
 
+from .views import CategoryBreadcrumbView
 from .viewsets import ArticleViewSet, CategoryViewSet, HotArticleViewSet, LastArticleViewSet, TagViewSet
 
 router = DefaultRouter(trailing_slash=False)
@@ -13,5 +15,7 @@ router.register(r'last-articles', LastArticleViewSet)
 
 app_name = 'blog'
 
-urlpatterns = [] + router.urls
+urlpatterns = [
+                  url(r'^category-breadcrumb$', CategoryBreadcrumbView.as_view())
+              ] + router.urls
 

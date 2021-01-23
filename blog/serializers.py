@@ -59,13 +59,14 @@ class TagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tag
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'color')
 
 
 class ArticleListSerializer(serializers.ModelSerializer):
     category = ArticleCategoryField(read_only=True)
     body = serializers.SerializerMethodField(read_only=True)
     url = serializers.SerializerMethodField(read_only=True)
+    tags = TagSerializer(read_only=True, many=True)
 
     @staticmethod
     def get_body(obj):
@@ -78,7 +79,7 @@ class ArticleListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ('id', 'title', 'url', 'category', 'body', 'publish_time', 'views')
+        fields = ('id', 'title', 'url', 'category', 'body', 'tags', 'publish_time', 'views')
 
 
 class ArticleDetailSerializer(serializers.ModelSerializer):
