@@ -6,7 +6,7 @@ __email__ = 'xuzhao@zhique.design'
 
 from rest_framework import serializers
 
-from .models import SiteProfile, Carousel, SocialAccount
+from .models import Carousel, SocialAccount
 
 
 class SocialAccountSerializer(serializers.ModelSerializer):
@@ -21,24 +21,6 @@ class SocialAccountSerializer(serializers.ModelSerializer):
         model = SocialAccount
         fields = ('qrcode_image_id', 'url', 'icon', 'title', 'id', 'qrcode_url')
         read_only_fields = ('is_active', 'qrcode_url')
-
-
-class SiteProfileSerializer(serializers.ModelSerializer):
-    """网站配置文件序列化"""
-    social_accounts = serializers.SerializerMethodField(read_only=True)
-
-    def get_social_accounts(self, _):
-        return SocialAccountSerializer(
-            SocialAccount.objects.all(),
-            many=True,
-            read_only=True,
-            context=self.context
-        ).data
-
-    class Meta:
-        model = SiteProfile
-        fields = '__all__'
-        read_only_fields = ('is_active',)
 
 
 class CarouselSerializer(serializers.ModelSerializer):

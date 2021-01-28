@@ -16,6 +16,7 @@ class CategoryBreadcrumbView(APIView):
         for category in Category.objects.all():
             if len(category.get_sub_categories()) == 0:
                 breadcrumb_dict[str(category.get_category_path())] = list(map(lambda c: ({
+                    'id': c.id,
                     'name': c.name,
                     'url': c.get_category_path()
                 }), category.get_category_tree()))[::-1]

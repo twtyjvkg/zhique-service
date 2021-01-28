@@ -6,19 +6,13 @@ __email__ = 'xuzhao@zhique.design'
 
 from ZhiQue import mixins, permissions
 from ZhiQue.mixins import ViewSetMixin
-from .models import Card, SiteProfile, Carousel, SocialAccount
-from .serializers import SiteProfileSerializer, CarouselSerializer, SocialAccountSerializer
+from .models import Card, Carousel, SocialAccount
+from .serializers import CarouselSerializer, SocialAccountSerializer
 
 
 class CardViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin, ViewSetMixin):
     """卡片"""
     queryset = Card.objects.all()
-
-
-class SiteProfileViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin, ViewSetMixin):
-    """网站配置文件"""
-    queryset = SiteProfile.objects.all()
-    serializer_class = SiteProfileSerializer
 
 
 class CarouselViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin, ViewSetMixin):

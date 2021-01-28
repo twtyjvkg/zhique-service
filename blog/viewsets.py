@@ -40,6 +40,11 @@ class ArticleViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.Retr
     serializer_class = ArticleListSerializer
     filter_class = ArticleFilter
 
+    def get_permissions(self):
+        if self.action in ('list', 'retrieve'):
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
+
     def get_serializer_class(self):
         action = self.action
         if action in ('create', 'retrieve', 'update', 'partial_update'):

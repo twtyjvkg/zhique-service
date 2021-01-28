@@ -4,7 +4,7 @@ import re
 
 from rest_framework import serializers
 
-from ZhiQue.utils.markdown import markdown_renderer
+from ZhiQue.utils.markdown import markdown_renderer, html_filter
 from .relations import ArticleCategoryField
 from .utils import truncate_content
 from .models import Category, Article, Tag
@@ -71,7 +71,7 @@ class ArticleListSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_body(obj):
         reg = re.compile('<[^>]*>')
-        return truncate_content(markdown_renderer(obj.body), length=300)
+        return truncate_content(html_filter(markdown_renderer(obj.body)), length=300)
 
     @staticmethod
     def get_url(obj):
