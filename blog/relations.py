@@ -13,6 +13,7 @@ class ArticleCategoryField(serializers.RelatedField):
         return {
             'id': value.id,
             'name': value.name,
+            'url': value.get_category_path(),
             'tree': list(map(lambda t: t.id, tree))[::-1]
         }
 

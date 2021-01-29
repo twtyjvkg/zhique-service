@@ -62,9 +62,3 @@ class HotArticleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Article.objects.filter(views__gt=0).order_by('-views')[:5]
     serializer_class = ArticleListSerializer
     permission_classes = (permissions.AllowAny,)
-
-
-class LastArticleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = Article.objects.order_by('-publish_time')[:5]
-    serializer_class = ArticleListSerializer
-    permission_classes = (permissions.AllowAny,)
