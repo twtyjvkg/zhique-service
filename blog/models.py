@@ -74,8 +74,8 @@ class Tag(BaseModel):
 
 class Article(BaseModel):
     STATUS_CHOICES = (
-        (True, '草稿'),
-        (False, '发表'),
+        (True, '发表'),
+        (False, '草稿'),
     )
     title = models.CharField('标题', max_length=200, unique=True)
     body = models.TextField('正文', default=None)
@@ -102,12 +102,22 @@ class Article(BaseModel):
         tree = self.category.get_category_tree()
         return list(map(lambda c: ({
             'name': c.name,
-            'children': list(map(lambda m: ({
-                'name': m.name,
-                'url': m.get_category_path()
-            }), c.get_sub_categories())),
             'url': c.get_category_path()
         }), tree))
+
+    def get_next_article(self):
+        next_article = Article.objects.filter(publish_time__gt=self.publish_time, status=True).order_by('publish_time').first()
+        return {
+            'url': next_article.get_absolute_url(),
+            'title': next_article.title
+        } if next_article else None
+
+    def get_prev_article(self):
+        prev_article = Article.objects.filter(publish_time__lt=self.publish_time, status=True).first()
+        return {
+            'url': prev_article.get_absolute_url(),
+            'title': prev_article.title
+        } if prev_article else None
 
     def viewed(self):
         self.views += 1

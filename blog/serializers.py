@@ -85,12 +85,14 @@ class ArticleListSerializer(serializers.ModelSerializer):
 class ArticleDetailSerializer(serializers.ModelSerializer):
     category_id = serializers.UUIDField(write_only=True)
     category = ArticleCategoryField(read_only=True)
+    tags = TagSerializer(read_only=True, many=True)
     breadcrumb = serializers.SerializerMethodField(read_only=True)
+    prev_article = serializers.JSONField(source='get_prev_article', read_only=True)
+    next_article = serializers.JSONField(source='get_next_article', read_only=True)
 
     @staticmethod
     def get_breadcrumb(obj):
         tree = obj.get_category_tree()
-        tree.append({'name': '断线的风筝', 'url': '/'})
         return tree[::-1]
 
     class Meta:
