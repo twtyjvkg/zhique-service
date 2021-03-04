@@ -81,6 +81,7 @@ class Article(BaseModel):
     body = models.TextField('正文', default=None)
     publish_time = models.DateTimeField('发表时间', null=True)
     status = models.BooleanField('文章状态', choices=STATUS_CHOICES, default=True)
+    is_recommend = models.BooleanField('推荐', default=False)
     category = models.ForeignKey(Category, verbose_name='分类', on_delete=models.SET_NULL, null=True)
     tags = models.ManyToManyField(Tag, verbose_name='标签')
     views = models.PositiveIntegerField('访问量', default=0)

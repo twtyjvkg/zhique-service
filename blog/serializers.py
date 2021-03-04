@@ -15,6 +15,7 @@ class CategorySerializer(serializers.ModelSerializer):
     children = serializers.SerializerMethodField(read_only=True)
     path = serializers.SerializerMethodField(read_only=True)
     level = serializers.SerializerMethodField(read_only=True)
+    tree = serializers.SerializerMethodField(read_only=True)
 
     @staticmethod
     def get_path(obj):
@@ -29,6 +30,10 @@ class CategorySerializer(serializers.ModelSerializer):
     @staticmethod
     def get_level(obj):
         return obj.get_category_level()
+
+    @staticmethod
+    def get_tree(obj):
+        return list(map(lambda t: t.get_category_path(), obj.get_category_tree()))[::-1]
 
     class Meta:
         model = Category
@@ -79,7 +84,7 @@ class ArticleListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ('id', 'title', 'url', 'category', 'body', 'tags', 'publish_time', 'views')
+        fields = ('id', 'title', 'url', 'category', 'body', 'tags', 'publish_time', 'is_recommend', 'views')
 
 
 class ArticleDetailSerializer(serializers.ModelSerializer):

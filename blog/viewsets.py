@@ -62,3 +62,9 @@ class HotArticleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Article.objects.filter(views__gt=0).order_by('-views')[:5]
     serializer_class = ArticleListSerializer
     permission_classes = (permissions.AllowAny,)
+
+
+class RecommendArticleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Article.objects.filter(is_recommend=True)[:5]
+    serializer_class = ArticleListSerializer
+    permission_classes = (permissions.AllowAny,)
